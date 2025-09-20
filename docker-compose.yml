@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   chroma:
-    image: chromadb/chroma
+    image: chromadb/chroma:0.4.24
     ports:
       - "8000:8000"
     volumes:
