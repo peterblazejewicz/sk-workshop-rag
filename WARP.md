@@ -25,6 +25,8 @@ Common commands (from README)
   - Single PDF: dotnet run -- --ingest "C:\\path\\to\\file.pdf"
   - Folder (recursive): dotnet run -- --ingest "C:\\path\\to\\folder"
   - Override collection: dotnet run -- --ingest "C:\\path\\to\\folder" --collection my-collection
+- Retrieval depth during chat:
+  - dotnet run -- --topk 5
 
 Environment assumptions (from README)
 - .NET 8 SDK installed.

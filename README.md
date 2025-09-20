@@ -163,6 +163,8 @@ CLI usage
   - dotnet run -- --ingest "C:\\path\\to\\folder"
 - Override collection name:
   - dotnet run -- --ingest "C:\\path\\to\\folder" --collection my-collection
+- Set retrieval depth (top-K) for chat:
+  - dotnet run -- --topk 5
 
 1.  In `Program.cs`, create an infinite `while` loop for the chat.
 2.  Prompt the user for input: `Console.Write("User > ");`

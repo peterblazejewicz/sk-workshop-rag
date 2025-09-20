@@ -18,7 +18,8 @@ var embedBaseUrl = Env("RAG__EMBED_BASE_URL", llmBaseUrl);
 // Build kernel with local OpenAI-compatible endpoints
 var builder = Kernel.CreateBuilder();
 var http = new HttpClient { BaseAddress = new Uri(llmBaseUrl) };
-var httpEmb = ReferenceEquals(embedBaseUrl, llmBaseUrl) ? http : new HttpClient { BaseAddress = new Uri(embedBaseUrl) };
+var embUrlWithSlash = embedBaseUrl.EndsWith("/") ? embedBaseUrl : embedBaseUrl + "/";
+var httpEmb = ReferenceEquals(embedBaseUrl, llmBaseUrl) ? http : new HttpClient { BaseAddress = new Uri(embUrlWithSlash) };
 
 builder.AddOpenAIChatCompletion(
     modelId: chatModel,
@@ -88,9 +89,16 @@ static string? GetArg(string[] args, string key)
 static void PrintUsage()
 {
     Console.WriteLine("Usage:");
-    Console.WriteLine("  dotnet run -- [--ingest <path>] [--collection <name>] [--help]");
+    Console.WriteLine("  dotnet run -- [--ingest <path>] [--collection <name>] [--ingest-only] [--topk <N>] [--help]");
     Console.WriteLine("    --ingest: Path to a PDF file or a directory containing PDFs (recursive).");
+    Console.WriteLine("    --ingest-only: Perform ingestion and exit without entering chat.");
     Console.WriteLine("    --collection: Override collection name (default: my-document-collection).");
+    Console.WriteLine("    --topk: Number of results to retrieve from vector store during chat (default: 3).");
+    Console.WriteLine();
+    Console.WriteLine("Examples:");
+    Console.WriteLine("  dotnet run -- --ingest \".\\docs\" --ingest-only");
+    Console.WriteLine("  dotnet run -- --ingest \"C:\\path\\to\\pdfs\" --collection workshop");
+    Console.WriteLine("  dotnet run -- --topk 5");
 }
 
 if (args.Any(a => a.Equals("--help", StringComparison.OrdinalIgnoreCase)))
@@ -101,6 +109,12 @@ if (args.Any(a => a.Equals("--help", StringComparison.OrdinalIgnoreCase)))
 
 var ingestPath = GetArg(args, "--ingest");
 var overrideCollection = GetArg(args, "--collection");
+var topKArg = GetArg(args, "--topk");
+var topK = 3;
+if (!string.IsNullOrWhiteSpace(topKArg) && int.TryParse(topKArg, out var parsedTopK) && parsedTopK > 0)
+{
+    topK = parsedTopK;
+}
 if (!string.IsNullOrWhiteSpace(overrideCollection))
 {
     collection = overrideCollection!;
@@ -159,7 +173,7 @@ while (true)
     }
 
     var context = new StringBuilder();
-    var results = memory.SearchAsync(collection, userInput, limit: 3, minRelevanceScore: 0.75);
+var results = memory.SearchAsync(collection, userInput, limit: topK, minRelevanceScore: 0.75);
     await foreach (var item in results)
     {
         _ = context.AppendLine(item.Metadata.Text);
