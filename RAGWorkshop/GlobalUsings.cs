@@ -9,4 +9,5 @@ global using Microsoft.SemanticKernel;
 global using Microsoft.SemanticKernel.ChatCompletion;
 global using Microsoft.SemanticKernel.Connectors.Chroma;
 global using Microsoft.SemanticKernel.Memory;
+global using Microsoft.SemanticKernel.Embeddings;
 global using UglyToad.PdfPig;

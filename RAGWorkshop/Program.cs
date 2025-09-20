@@ -27,13 +27,28 @@ builder.AddOpenAIEmbeddingGenerator(
     modelId: embedModel,
     apiKey: apiKey,
     httpClient: http);
+// Legacy embedding generator (fallback)
+builder.AddOpenAITextEmbeddingGeneration(
+    modelId: embedModel,
+    apiKey: apiKey,
+    httpClient: http);
 
 var kernel = builder.Build();
 
 // Configure Chroma memory store and semantic memory
 var chroma = new ChromaMemoryStore(chromaUrl);
-var embedder = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
-var memory = new SemanticTextMemory(chroma, embedder);
+ISemanticTextMemory memory;
+var useLegacy = Env("RAG__EMBED_USE_LEGACY", "false").Equals("true", StringComparison.OrdinalIgnoreCase);
+if (useLegacy)
+{
+    var legacy = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
+    memory = new SemanticTextMemory(chroma, legacy);
+}
+else
+{
+    var embedder = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
+    memory = new SemanticTextMemory(chroma, embedder);
+}
 
 Console.WriteLine("Semantic Kernel configured.");
 Console.WriteLine($"- LLM base: {llmBaseUrl}");
