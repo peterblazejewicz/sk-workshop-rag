@@ -5,6 +5,7 @@ using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Memory;
 using System.Net.Http;
+using System.Text;
 
 static string Env(string name, string fallback)
 {
@@ -48,5 +49,36 @@ Console.WriteLine($"- Embed model: {embedModel}");
 Console.WriteLine($"- Chroma: {chromaUrl}");
 Console.WriteLine($"- Collection: {collection}");
 
-// Placeholder until ingestion/chat are implemented
-Console.WriteLine("RAG Workshop scaffold ready (kernel + memory wired).");
+// Chat loop (retrieval + augmentation + generation)
+var chat = kernel.GetRequiredService<IChatCompletionService>();
+
+Console.WriteLine("Type your question (or just press Enter to exit).");
+while (true)
+{
+    Console.Write("User > ");
+    var userInput = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(userInput)) break;
+
+    var context = new StringBuilder();
+    var results = memory.SearchAsync(collection, userInput, limit: 3, minRelevanceScore: 0.75);
+    await foreach (var item in results)
+    {
+        context.AppendLine(item.Metadata.Text);
+    }
+
+    var prompt = $"""
+You are a helpful AI assistant answering questions based on the provided context.
+
+Context:
+---
+{context}
+---
+
+Question: {userInput}
+
+Answer:
+""";
+
+    var response = await chat.GetChatMessageContentAsync(prompt);
+    Console.WriteLine($"AI > {response.Content}\n");
+}
