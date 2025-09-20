@@ -219,9 +219,34 @@ Upon completion of this workshop, you will have a fully functional, local, and c
 
 -----
 
-### \#\# 5. Proposed Resources for Further Review
+### ## 5. Proposed Resources for Further Review
 
 1.  **Official Semantic Kernel Documentation**: [Microsoft Learn - Semantic Kernel](https://learn.microsoft.com/en-us/semantic-kernel/overview/)
-2.  **SK GitHub Repository (Examples)**: The C\# and Python examples are invaluable. [SK GitHub Repo](https://github.com/microsoft/semantic-kernel)
+2.  **SK GitHub Repository (Examples)**: The C# and Python examples are invaluable. [SK GitHub Repo](https://github.com/microsoft/semantic-kernel)
 3.  **Connectors in Semantic Kernel**: A deeper dive into how SK connects to various services. [SK Connectors Documentation](https://www.google.com/search?q=https://learn.microsoft.com/en-us/semantic-kernel/agents/plugins/out-of-the-box-plugins%3Fpivots%3Dprogramming-language-csharp)
 4.  **Semantic Memory Concepts**: Detailed explanation of how memory works in SK. [SK Memory Documentation](https://learn.microsoft.com/en-us/semantic-kernel/memories/)"
+
+---
+
+## Interactive Notebooks (.NET/C#)
+
+This repository includes a C# notebook under `notebooks/` that lets you ingest PDFs into Chroma and query them, using the same stack as the console app (Semantic Kernel + Chroma + local OpenAI-compatible endpoints).
+
+Setup (one-time):
+- In VS Code, run the task: "Setup: Jupyter + .NET Interactive". This creates a local Python venv (`.venv`), installs Jupyter Lab, and registers the .NET kernels inside the venv.
+
+Run:
+- In VS Code, run the task: "Open: Jupyter Lab". It opens Jupyter rooted at `notebooks/`.
+- Open `notebooks/chroma_csharp.ipynb` and select the kernel ".NET (C#)".
+
+Manual commands (PowerShell):
+- Setup: `pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/setup-jupyter.ps1`
+- Launch: `.\.venv\Scripts\jupyter-lab notebooks`
+
+Environment variables used by the notebook (same defaults as the app):
+- `RAG__LLM_BASE_URL` (default: http://127.0.0.1:1234/v1)
+- `RAG__CHAT_MODEL` (default: meta-llama-3.1-8b-instruct)
+- `RAG__EMBED_MODEL` (default: text-embedding-nomic-embed-text-v2)
+- `RAG__LLM_API_KEY` (default: nokey)
+- `RAG__CHROMA_URL` (default: http://localhost:8000)
+- `RAG__COLLECTION` (default: my-document-collection)
