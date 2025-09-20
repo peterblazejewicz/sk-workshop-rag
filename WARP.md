@@ -18,9 +18,13 @@ Common commands (from README)
   - dotnet add package Microsoft.SemanticKernel.Connectors.Chroma --version "1.65.0-*"
   - dotnet add package Microsoft.SemanticKernel.Connectors.OpenAI --version "1.65.*"
   - dotnet add package UglyToad.PdfPig --version "1.7.0-*"
-- Build and run (after you implement Program.cs and ingestion/chat logic):
+- Build and run:
   - dotnet build
   - dotnet run
+- Ingestion via CLI flags (optional):
+  - Single PDF: dotnet run -- --ingest "C:\\path\\to\\file.pdf"
+  - Folder (recursive): dotnet run -- --ingest "C:\\path\\to\\folder"
+  - Override collection: dotnet run -- --ingest "C:\\path\\to\\folder" --collection my-collection
 
 Environment assumptions (from README)
 - .NET 8 SDK installed.

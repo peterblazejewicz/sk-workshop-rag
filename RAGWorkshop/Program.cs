@@ -42,6 +42,76 @@ Console.WriteLine($"- Embed model: {embedModel}");
 Console.WriteLine($"- Chroma: {chromaUrl}");
 Console.WriteLine($"- Collection: {collection}");
 
+// CLI flags
+static string? GetArg(string[] args, string key)
+{
+    for (var i = 0; i < args.Length; i++)
+    {
+        var a = args[i];
+        if (a.Equals(key, StringComparison.OrdinalIgnoreCase))
+        {
+            return i + 1 < args.Length ? args[i + 1] : null;
+        }
+
+        if (a.StartsWith(key + "=", StringComparison.OrdinalIgnoreCase))
+        {
+            return a[(key.Length + 1)..];
+        }
+    }
+
+    return null;
+}
+
+static void PrintUsage()
+{
+    Console.WriteLine("Usage:");
+    Console.WriteLine("  dotnet run -- [--ingest <path>] [--collection <name>] [--help]");
+    Console.WriteLine("    --ingest: Path to a PDF file or a directory containing PDFs (recursive).");
+    Console.WriteLine("    --collection: Override collection name (default: my-document-collection).");
+}
+
+if (args.Any(a => a.Equals("--help", StringComparison.OrdinalIgnoreCase)))
+{
+    PrintUsage();
+    return;
+}
+
+var ingestPath = GetArg(args, "--ingest");
+var overrideCollection = GetArg(args, "--collection");
+if (!string.IsNullOrWhiteSpace(overrideCollection))
+{
+    collection = overrideCollection!;
+}
+
+if (!string.IsNullOrWhiteSpace(ingestPath))
+{
+    // Ingest either a single PDF or all PDFs from a directory (recursive)
+    IEnumerable<string> pdfs;
+    if (Directory.Exists(ingestPath))
+    {
+        pdfs = Directory.EnumerateFiles(ingestPath, "*.pdf", SearchOption.AllDirectories);
+    }
+    else if (File.Exists(ingestPath) && Path.GetExtension(ingestPath).Equals(".pdf", StringComparison.OrdinalIgnoreCase))
+    {
+        pdfs = [ingestPath];
+    }
+    else
+    {
+        Console.WriteLine($"Invalid --ingest path: {ingestPath}");
+        PrintUsage();
+        return;
+    }
+
+    Console.WriteLine($"Ingesting {pdfs.Count()} file(s) into collection '{collection}'...");
+    foreach (var pdf in pdfs)
+    {
+        await RAGWorkshop.DataIngestion.IngestPdfAsync(pdf, memory, collection);
+        Console.WriteLine($"  - Ingested: {pdf}");
+    }
+
+    Console.WriteLine("Ingestion complete. Entering chat mode.\n");
+}
+
 // Chat loop (retrieval + augmentation + generation)
 var chat = kernel.GetRequiredService<IChatCompletionService>();
 var history = new ChatHistory();

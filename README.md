@@ -156,6 +156,14 @@ var memory = new SemanticTextMemory(chromaMemoryStore,
 
 **Step 4: Implement the RAG Chat Loop**
 
+CLI usage
+- Ingest a single PDF (before chat):
+  - dotnet run -- --ingest "C:\\path\\to\\file.pdf"
+- Ingest a folder of PDFs recursively:
+  - dotnet run -- --ingest "C:\\path\\to\\folder"
+- Override collection name:
+  - dotnet run -- --ingest "C:\\path\\to\\folder" --collection my-collection
+
 1.  In `Program.cs`, create an infinite `while` loop for the chat.
 2.  Prompt the user for input: `Console.Write("User > ");`
 3.  Use the `memory` object to search for relevant context:
