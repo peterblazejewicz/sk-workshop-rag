@@ -1,0 +1,12 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.IO;
+global using System.Net.Http;
+global using System.Text;
+global using System.Threading.Tasks;
+global using Microsoft.Extensions.AI;
+global using Microsoft.SemanticKernel;
+global using Microsoft.SemanticKernel.ChatCompletion;
+global using Microsoft.SemanticKernel.Connectors.Chroma;
+global using Microsoft.SemanticKernel.Memory;
+global using UglyToad.PdfPig;

@@ -30,10 +30,10 @@ Environment assumptions (from README)
 High-level architecture (big picture)
 - Orchestrator: Microsoft Semantic Kernel (SK) configures two OpenAI-compatible connectors against the local LLM server:
   - Chat completion (AddOpenAIChatCompletion)
-  - Embedding generation (AddOpenAITextEmbeddingGeneration)
+  - Embedding generation (AddOpenAIEmbeddingGenerator)
 - Vector store: ChromaDB (local, via Docker) used through SK’s Chroma connector as the memory store.
 - Ingestion pipeline:
-  - Parse PDFs locally (e.g., iTextSharp), split text into ~512-token chunks with ~50-token overlap.
+  - Parse PDFs locally (UglyToad.PdfPig), split text into ~512-token chunks with ~50-token overlap.
   - For each chunk, generate embeddings via SK’s embedding service and save to Chroma with an identifiable id (e.g., filePath-chunkIndex) into a named collection (e.g., "my-document-collection").
 - Retrieval + augmentation:
   - For a user query, search Chroma via SK’s semantic memory (limit top-k, apply min relevance threshold).
@@ -43,6 +43,10 @@ High-level architecture (big picture)
   - Send to the local LLM via SK’s chat completion to produce the final response.
 - Interaction model:
   - Console loop reading user input, performing retrieve-augment-generate each turn, and printing responses.
+
+Coding conventions
+- Block-scoped namespaces are used across the project.
+- Global usings consolidate common SK and framework namespaces to reduce boilerplate in source files.
 
 File and component expectations once scaffolded
 - docker-compose.yml at the repo root defining the chroma service, exposing port 8000 and persisting a volume.

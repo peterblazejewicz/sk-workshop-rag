@@ -1,7 +1,4 @@
 ﻿#pragma warning disable SKEXP0001
-using System.Text;
-using Microsoft.SemanticKernel.Memory;
-using UglyToad.PdfPig;
 
 namespace RAGWorkshop
 {

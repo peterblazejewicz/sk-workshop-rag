@@ -36,6 +36,9 @@ csharp_style_prefer_primary_constructors = true:suggestion
 dotnet_sort_system_directives_first = true:warning
 file_header_template = unset
 
+# Namespace style (project-wide convention)
+csharp_style_namespace_declarations = block_scoped:warning
+
 # New line options
 csharp_new_line_before_open_brace = all
 

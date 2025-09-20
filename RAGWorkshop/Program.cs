@@ -1,10 +1,4 @@
 ﻿#pragma warning disable SKEXP0001, SKEXP0010, SKEXP0011, SKEXP0020, SKEXP0028, SKEXP0052
-using System.Text;
-using Microsoft.Extensions.AI;
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.Chroma;
-using Microsoft.SemanticKernel.Memory;
 
 static string Env(string name, string fallback)
 {
