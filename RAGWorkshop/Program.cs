@@ -1,8 +1,9 @@
 #pragma warning disable SKEXP0001, SKEXP0010, SKEXP0011, SKEXP0020, SKEXP0028, SKEXP0052
+using Microsoft.Extensions.AI;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Connectors.Chroma;
-using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.Chroma;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Memory;
 using System.Net.Http;
 using System.Text;
@@ -30,7 +31,7 @@ builder.AddOpenAIChatCompletion(
     apiKey: apiKey,
     httpClient: http);
 
-builder.AddOpenAITextEmbeddingGeneration(
+builder.AddOpenAIEmbeddingGenerator(
     modelId: embedModel,
     apiKey: apiKey,
     httpClient: http);
@@ -39,7 +40,7 @@ var kernel = builder.Build();
 
 // Configure Chroma memory store and semantic memory
 var chroma = new ChromaMemoryStore(chromaUrl);
-var embedder = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
+var embedder = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 var memory = new SemanticTextMemory(chroma, embedder);
 
 Console.WriteLine("Semantic Kernel configured.");
@@ -51,6 +52,8 @@ Console.WriteLine($"- Collection: {collection}");
 
 // Chat loop (retrieval + augmentation + generation)
 var chat = kernel.GetRequiredService<IChatCompletionService>();
+var history = new ChatHistory();
+history.AddSystemMessage("You are a helpful AI assistant answering questions based on the provided context.");
 
 Console.WriteLine("Type your question (or just press Enter to exit).");
 while (true)
@@ -66,19 +69,19 @@ while (true)
         context.AppendLine(item.Metadata.Text);
     }
 
-    var prompt = $"""
-You are a helpful AI assistant answering questions based on the provided context.
-
+    var userMessage = $"""
 Context:
 ---
 {context}
 ---
 
 Question: {userInput}
-
-Answer:
 """;
 
-    var response = await chat.GetChatMessageContentAsync(prompt);
+    history.AddUserMessage(userMessage);
+
+    var response = await chat.GetChatMessageContentAsync(history, kernel: kernel);
     Console.WriteLine($"AI > {response.Content}\n");
+
+    history.AddMessage(response.Role, response.Content ?? string.Empty);
 }
