@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enforce modern analyzer rules and code style in build -->
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- Keep warnings visible but do not fail the build on them by default -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
