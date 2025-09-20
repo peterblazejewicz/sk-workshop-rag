@@ -7,16 +7,18 @@ static string Env(string name, string fallback)
 }
 
 // Defaults and env overrides
-var llmBaseUrl = Env("RAG__LLM_BASE_URL", "http://localhost:1234/v1");
-var chatModel = Env("RAG__CHAT_MODEL", "local-llm");
-var embedModel = Env("RAG__EMBED_MODEL", "local-embedding-model");
+var llmBaseUrl = Env("RAG__LLM_BASE_URL", "http://127.0.0.1:1234/v1");
+var chatModel = Env("RAG__CHAT_MODEL", "meta-llama-3.1-8b-instruct");
+var embedModel = Env("RAG__EMBED_MODEL", "text-embedding-nomic-embed-text-v2");
 var apiKey = Env("RAG__LLM_API_KEY", "nokey");
 var chromaUrl = Env("RAG__CHROMA_URL", "http://localhost:8000");
 var collection = Env("RAG__COLLECTION", "my-document-collection");
+var embedBaseUrl = Env("RAG__EMBED_BASE_URL", llmBaseUrl);
 
 // Build kernel with local OpenAI-compatible endpoints
 var builder = Kernel.CreateBuilder();
 var http = new HttpClient { BaseAddress = new Uri(llmBaseUrl) };
+var httpEmb = ReferenceEquals(embedBaseUrl, llmBaseUrl) ? http : new HttpClient { BaseAddress = new Uri(embedBaseUrl) };
 
 builder.AddOpenAIChatCompletion(
     modelId: chatModel,
@@ -26,20 +28,26 @@ builder.AddOpenAIChatCompletion(
 builder.AddOpenAIEmbeddingGenerator(
     modelId: embedModel,
     apiKey: apiKey,
-    httpClient: http);
+    httpClient: httpEmb);
 // Legacy embedding generator (fallback)
 builder.AddOpenAITextEmbeddingGeneration(
     modelId: embedModel,
     apiKey: apiKey,
-    httpClient: http);
+    httpClient: httpEmb);
 
 var kernel = builder.Build();
 
 // Configure Chroma memory store and semantic memory
-var chroma = new ChromaMemoryStore(chromaUrl);
+var chroma = new Microsoft.SemanticKernel.Connectors.Chroma.ChromaMemoryStore(chromaUrl);
 ISemanticTextMemory memory;
 var useLegacy = Env("RAG__EMBED_USE_LEGACY", "false").Equals("true", StringComparison.OrdinalIgnoreCase);
-if (useLegacy)
+var useCustom = Env("RAG__EMBED_USE_CUSTOM", "true").Equals("true", StringComparison.OrdinalIgnoreCase);
+if (useCustom)
+{
+    var custom = new RAGWorkshop.LmStudioEmbeddingGenerator(httpEmb, embedModel);
+    memory = new SemanticTextMemory(chroma, embeddingGenerator: custom);
+}
+else if (useLegacy)
 {
     var legacy = kernel.GetRequiredService<ITextEmbeddingGenerationService>();
     memory = new SemanticTextMemory(chroma, legacy);
@@ -47,7 +55,7 @@ if (useLegacy)
 else
 {
     var embedder = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
-    memory = new SemanticTextMemory(chroma, embedder);
+    memory = new SemanticTextMemory(chroma, embeddingGenerator: embedder);
 }
 
 Console.WriteLine("Semantic Kernel configured.");
