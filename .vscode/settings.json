@@ -1,0 +1,8 @@
+{
+  "jupyter.jupyterServerType": "local",
+  "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+  "files.exclude": {
+    "**/.venv": true
+  },
+  "jupyter.interactiveWindow.creationMode": "perFile"
+}

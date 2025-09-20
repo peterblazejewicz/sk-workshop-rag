@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Setup: Jupyter + .NET Interactive",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}\\scripts\\setup-jupyter.ps1"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Open: Jupyter Lab",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\jupyter-lab",
+      "args": [
+        "notebooks"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
