@@ -83,6 +83,8 @@ if (!string.IsNullOrWhiteSpace(overrideCollection))
     collection = overrideCollection!;
 }
 
+var ingestOnly = args.Any(a => a.Equals("--ingest-only", StringComparison.OrdinalIgnoreCase));
+
 if (!string.IsNullOrWhiteSpace(ingestPath))
 {
     // Ingest either a single PDF or all PDFs from a directory (recursive)
@@ -107,6 +109,12 @@ if (!string.IsNullOrWhiteSpace(ingestPath))
     {
         await RAGWorkshop.DataIngestion.IngestPdfAsync(pdf, memory, collection);
         Console.WriteLine($"  - Ingested: {pdf}");
+    }
+
+    if (ingestOnly)
+    {
+        Console.WriteLine("Ingestion complete. Exiting (--ingest-only).\n");
+        return;
     }
 
     Console.WriteLine("Ingestion complete. Entering chat mode.\n");
