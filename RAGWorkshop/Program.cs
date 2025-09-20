@@ -7,7 +7,7 @@ static string Env(string name, string fallback)
 }
 
 // Defaults and env overrides
-var llmBaseUrl = Env("RAG__LLM_BASE_URL", "http://localhost:1234");
+var llmBaseUrl = Env("RAG__LLM_BASE_URL", "http://localhost:1234/v1");
 var chatModel = Env("RAG__CHAT_MODEL", "local-llm");
 var embedModel = Env("RAG__EMBED_MODEL", "local-embedding-model");
 var apiKey = Env("RAG__LLM_API_KEY", "nokey");

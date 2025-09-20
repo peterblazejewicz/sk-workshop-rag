@@ -107,7 +107,7 @@ This scenario provides a detailed, sequential guide intended for execution. The 
 4.  Build the `SemanticTextMemory` instance using the configured memory store and embedding generator.
 
    Defaults and env overrides used by the sample code:
-   - RAG__LLM_BASE_URL (default: http://localhost:1234)
+- RAG__LLM_BASE_URL (default: http://localhost:1234/v1)
    - RAG__CHAT_MODEL (default: local-llm)
    - RAG__EMBED_MODEL (default: local-embedding-model)
    - RAG__LLM_API_KEY (default: nokey)

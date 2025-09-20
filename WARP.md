@@ -29,7 +29,7 @@ Common commands (from README)
 Environment assumptions (from README)
 - .NET 8 SDK installed.
 - Docker Desktop installed and running (ChromaDB on http://localhost:8000).
-- A local LLM (LM Studio or Ollama) running with an OpenAI-compatible endpoint (e.g., http://localhost:1234/v1). For local servers, apiKey can typically be null/any string.
+- A local LLM (LM Studio or Ollama) running with an OpenAI-compatible endpoint (e.g., http://localhost:1234/v1). For local servers, apiKey can typically be null/any string. Ensure the base URL includes /v1.
 
 High-level architecture (big picture)
 - Orchestrator: Microsoft Semantic Kernel (SK) configures two OpenAI-compatible connectors against the local LLM server:
