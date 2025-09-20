@@ -93,10 +93,10 @@ This scenario provides a detailed, sequential guide intended for execution. The 
 5.  Navigate into the project directory: `cd RAGWorkshop`
 6.  Add required NuGet packages:
     ```shell
-    dotnet add package Microsoft.SemanticKernel --version "1.12.0"
-    dotnet add package Microsoft.SemanticKernel.Connectors.Chroma --version "1.12.0"
-    dotnet add package Microsoft.SemanticKernel.Connectors.OpenAI --version "1.12.0"
-    dotnet add package iTextSharp # Or another PDF parsing library like PdfPig
+    dotnet add package Microsoft.SemanticKernel --version "1.65.*"
+    dotnet add package Microsoft.SemanticKernel.Connectors.Chroma --version "1.65.0-*"
+    dotnet add package Microsoft.SemanticKernel.Connectors.OpenAI --version "1.65.*"
+    dotnet add package UglyToad.PdfPig --version "1.7.0-*"
     ```
 
 **Step 2: Kernel and Memory Configuration**
@@ -134,7 +134,7 @@ var memory = new SemanticTextMemory(chromaMemoryStore,
 
 1.  Create a `DataIngestion` class.
 2.  Write a method `IngestPdfAsync(string filePath, ISemanticTextMemory memory)` within this class.
-3.  Inside the method, use `iTextSharp` to extract raw text from the PDF.
+3.  Inside the method, use `UglyToad.PdfPig` to extract raw text from the PDF.
 4.  Split the extracted text into chunks of \~512 tokens with an overlap of \~50 tokens.
 5.  Loop through the chunks and save each to the memory store. Use the file path as part of the `id` for easier tracking.
     ```csharp

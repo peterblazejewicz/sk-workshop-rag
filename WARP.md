@@ -14,10 +14,10 @@ Common commands (from README)
   - dotnet new console -n RAGWorkshop
   - cd RAGWorkshop
 - Add required NuGet packages (versions per README):
-  - dotnet add package Microsoft.SemanticKernel --version "1.12.0"
-  - dotnet add package Microsoft.SemanticKernel.Connectors.Chroma --version "1.12.0"
-  - dotnet add package Microsoft.SemanticKernel.Connectors.OpenAI --version "1.12.0"
-  - dotnet add package iTextSharp
+  - dotnet add package Microsoft.SemanticKernel --version "1.65.*"
+  - dotnet add package Microsoft.SemanticKernel.Connectors.Chroma --version "1.65.0-*"
+  - dotnet add package Microsoft.SemanticKernel.Connectors.OpenAI --version "1.65.*"
+  - dotnet add package UglyToad.PdfPig --version "1.7.0-*"
 - Build and run (after you implement Program.cs and ingestion/chat logic):
   - dotnet build
   - dotnet run
